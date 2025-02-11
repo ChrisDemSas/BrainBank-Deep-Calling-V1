@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Bank - Deep Calling</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <div class="brain-bank">■ Brain Bank</div>
+                <div class="deep-calling">└ Deep Calling</div>
+            </div>
+            
+            <div class="info-section">
+                <h3>Information</h3>
+                <p>The Deep Calling feature aims to match provide quality matches between the candidate and any impact ventures. Our AI agent will do its best to interview you, so please answer as wholly as possible!</p>
+                
+                <p class="feedback-note">As our AI is still a work in progress, we appreciate your feedback here:</p>
+                <button class="feedback-btn">Feedback</button>
+            </div>
+            
+            <div class="user-info">■ John Doe</div>
+        </div>
+
+        <div class="chat-container">
+            <div id="chat-messages"></div>
+            <div id="input-container" class="hidden">
+                <textarea placeholder="Type your answer here..."></textarea>
+                <button id="send-btn">Send</button>
+            </div>
+            <button id="view-results" class="hidden">View Results</button>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/chat-script.js') }}"></script>
+</body>
+</html>

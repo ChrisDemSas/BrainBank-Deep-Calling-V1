@@ -1,0 +1,13 @@
+setuptools==75.8.0
+pandas
+transformers==4.48.1
+scikit_learn==1.6.1
+torch==2.2.2
+sentence_transformers==3.4.0
+numpy==1.26.4
+openai==1.60.2
+bs4==0.0.2
+python-dotenv==1.0.1
+langchain==0.3.16
+langchain-anthropic==0.3.4
+langchain-openai==0.3.3
