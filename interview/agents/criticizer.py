@@ -59,16 +59,21 @@ class Criticizer(LLMAgent):
                                         api_key = api_key)
         
         self.user_past = user_past
-        self.prompt = """The following is the question from a conversation:
+        self.prompt = """
+        Below is a question from a conversation:
+
+        Question:
         {question}
 
-        Here is the current personality evaluation based on previous conversations with this user:
+        Personality Evaluation:
         {evaluation}
 
-        If the evaluation is simply: "Continue." Then I want you to suggest a critique which indicates that you want a completely different question which pertains to personal values, personal goals or personal interests.
+        Provide a meaningful critique of the question based on the personality evaluation. Focus on how the questioner can improve the question to make the evaluation more specific and confident. Your critique should address any gaps in the question that prevent a deeper or more accurate understanding of the user's personality.
 
-        Otherwise, I want you to provide a meaningful critique to the question based on the personality evaluation. More specifically, what can the questioner do to make the evaluation more specific and confident? 
-        Limit your critique to 1 paragraph (50 words) but do not suggest any questions directly.
+        Guidelines:
+
+        Limit your critique to one paragraph (up to 50 words).
+        Do not suggest new questions directly.
         """
 
         self.append_history("system", "You are a manager who is giving constructive criticism on how to make your worker's work better.")

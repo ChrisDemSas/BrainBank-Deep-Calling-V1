@@ -36,7 +36,7 @@ class Questioner(LLMAgent):
         self.question_counter = 0
 
         self.client = ChatAnthropic(model="claude-3-5-haiku-latest", 
-                                    temperature = 0.8,
+                                    temperature = 0,
                                     max_tokens = 1024,
                                     timeout = None,
                                     max_retries = 2,
@@ -44,20 +44,32 @@ class Questioner(LLMAgent):
         
         self.append_history("system", "You are a friend who is interviewing someone to match them with meaningful work. Be as personable as possible.")
 
-        self.critic_prompt = """Here is a critique of the previous question, if it is 'None', ignore the critique:
+        self.critic_prompt = """
+        You have been provided with a critique of the previous question or a user response. If the critique is 'None,' treat the provided response as a user response.
+
+        Critique:
         {critique}
 
-        Here is the previous question:
+        Previous Question or User Response:
         {response}
 
-        Adjust the question as much as possible, taking into account:
-        1) Ask investigative questions: Don't ask speculative questions!
-        2) Must be a follow up question to the human responses.
-        3) Be friendly!
-        4) Must focus on the person's goals, interests and values.
+        Adjust and reword the next question as follows:
 
-        Reword the question, and just output the reworded question.
+        If the critique is 'None' (i.e., it's a user response):
+        Ask an investigative follow-up question that encourages the user to explore new aspects of their response. Avoid narrowing the focus to one specific detail, and ensure the question opens up further lines of conversation.
+        
+        If a critique is provided:
+            Refine and reword the previous question based on the critique.
+            Focus on investigative questions that encourage deeper exploration of the user's perspective, avoiding overly specific or speculative questions.
+            Maintain a friendly tone to keep the conversation approachable and inviting.
+            Ensure the question touches on the user's goals, interests, or values, while encouraging a broader exploration of those themes.
+            Output only one question, with some acknowledgement of the response.
         """
+    
+    def add_question_counter(self) -> None:
+        """Increment self.question_counter by 1."""
+
+        self.question_counter += 1
     
     def generate(self, response: str, critique: str = None) -> str:
         """Take in a response and generate a follow up question.
@@ -77,5 +89,4 @@ class Questioner(LLMAgent):
         chain = prompt | self.client
         content = chain.invoke({"response": response, "critique": critique}).content
         self.append_history("assistant", content)
-        self.question_counter += 1
         return content

@@ -91,10 +91,13 @@ class InterviewAgent:
         """
 
         if response is None:
+
             return self.questioner.generate("Hey! Please ask your first question!")
         elif critique is None:
+
             return self.questioner.generate(response)
         else:
+            
             return self.questioner.generate(response, critique)
     
     def get_response(self, response: str = None) -> str:
@@ -113,22 +116,27 @@ class InterviewAgent:
         # Return the updated question
         
         if self.terminator.termination_status():
+
             return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections. Type 'Finish' to continue."
 
         if (response is None) or (response.lower() == 'start'):
-            return "Hi! My name is Sally and I'm your interviewer! I'd like to ask a few questions to get to know you. What brings you here today?"
+
+            return "Hi! My name is Sally and I'm your interviewer! I'd like to ask a few questions (9 Questions) to get to know you. What brings you here today?"
         
         question = self._generate_suitable_question(response)
-
         self.history.append_history(response)
         if (self.obtain_question_counter() % self.obtain_question_threshold()) == 0 and (self.obtain_question_counter() > 0):
             print("Updating Evaluation")
             past_history = self.history.concoctenate_string(self.obtain_question_threshold())
             self.evaluator.update_evaluation(past_history)
+            question = self._generate_suitable_question(response, critique="Generate a new, generic question that is not similar to any questions asked previously and is related to one of personal values, future goals or personal interests.")
+        else:
+            evaluation = self.evaluator.generate()
+            critique = self.criticizer.generate(question, evaluation)
+            question = self._generate_suitable_question(response, critique=critique)
 
-        evaluation = self.evaluator.generate()
-        critique = self.criticizer.generate(question, evaluation)
-        question = self._generate_suitable_question(response, critique=critique)
+        self.questioner.add_question_counter() # Add question counter
+
         return question
     
     def terminate_interview(self) -> Dict:

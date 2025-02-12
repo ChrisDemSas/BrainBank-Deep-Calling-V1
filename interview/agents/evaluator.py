@@ -68,9 +68,18 @@ class Evaluator(LLMAgent):
         """Update the evaluation using the answers given."""
 
 
-        prompt = """Here is a response from a user: {response}. This is your past impression: {evaluation}
-            What are your current impressions of this user right now? Combine this new impression with the past impression if there are any, i.e update your current evaluation based on this new information.
-            """
+        prompt = """
+        Below is a response from the user and your past impression of them:
+
+        User Response:
+        {response}
+
+        Past Impression:
+        {evaluation}
+
+        You are trying to gain a deeper understanding of the user's values, goals, and personal interests. Update the past impression based on the new response, specifically focusing on any new insights related to the user's values, goals, and personal interests. 
+        Ensure that the updated impression is coherent and integrates both past and new information.
+        """
 
         self.append_history("human", response)
         prompt = ChatPromptTemplate(self.reveal_chat_history())
@@ -89,11 +98,13 @@ class Evaluator(LLMAgent):
         # Output the critique as needed
 
         curr_prompt = """ 
-        Here is the current evaluation:
+        Below is the current evaluation of the user:
+
+        Evaluation:
         {evaluation}
 
-        You are to give a one improvement on how the evaluation can be more specific and holistic.
-        If there is no substantial critique, output "Continue".
+        Provide one suggestion to make the evaluation more specific and holistic. Focus on any missing aspects related to the user's values, goals, or interests. 
+        If the evaluation is already thorough and requires no substantial critique, simply output: "Continue"
         """
 
         self.append_history("human", curr_prompt)
