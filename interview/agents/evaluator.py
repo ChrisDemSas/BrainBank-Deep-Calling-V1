@@ -33,7 +33,7 @@ class Evaluator(LLMAgent):
     prompt: str
     history: ChatHistory
 
-    def __init__(self, api_key: str, model: str = "Claude", threshold: int = 4) -> None:
+    def __init__(self, api_key: str, model: str = "Claude", threshold: int = 3) -> None:
         """Take in an API key and initialize the Evaluator class.
 
         Attributes:

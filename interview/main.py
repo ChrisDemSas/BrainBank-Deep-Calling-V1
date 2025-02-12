@@ -54,7 +54,7 @@ class InterviewAgent:
         self.questioner = Questioner(anthropic_key)
         self.evaluator = Evaluator(anthropic_key)
         self.history = UserHistory()
-        self.terminator = Termination(no_questions = 12)
+        self.terminator = Termination(no_questions = 9)
         self.name = name
         self.id = uuid.uuid4()
 
@@ -116,12 +116,13 @@ class InterviewAgent:
             return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections. Type 'Finish' to continue."
 
         if (response is None) or (response.lower() == 'start'):
-            return "Hi! My name is SallyBot and I'm your questioner. I'd like to ask a few questions to get to know you. What brings you here today?"
+            return "Hi! My name is Sally and I'm your interviewer! I'd like to ask a few questions to get to know you. What brings you here today?"
         
         question = self._generate_suitable_question(response)
 
         self.history.append_history(response)
         if (self.obtain_question_counter() % self.obtain_question_threshold()) == 0 and (self.obtain_question_counter() > 0):
+            print("Updating Evaluation")
             past_history = self.history.concoctenate_string(self.obtain_question_threshold())
             self.evaluator.update_evaluation(past_history)
 

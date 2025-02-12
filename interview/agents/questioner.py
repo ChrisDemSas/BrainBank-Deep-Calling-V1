@@ -54,6 +54,7 @@ class Questioner(LLMAgent):
         1) Ask investigative questions: Don't ask speculative questions!
         2) Must be a follow up question to the human responses.
         3) Be friendly!
+        4) Must focus on the person's goals, interests and values.
 
         Reword the question, and just output the reworded question.
         """

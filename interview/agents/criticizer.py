@@ -68,7 +68,7 @@ class Criticizer(LLMAgent):
         If the evaluation is simply: "Continue." Then I want you to suggest a critique which indicates that you want a completely different question which pertains to personal values, personal goals or personal interests.
 
         Otherwise, I want you to provide a meaningful critique to the question based on the personality evaluation. More specifically, what can the questioner do to make the evaluation more specific and confident? 
-        Limit your critique to 1 paragraph (100 words) but do not suggest any questions directly.
+        Limit your critique to 1 paragraph (50 words) but do not suggest any questions directly.
         """
 
         self.append_history("system", "You are a manager who is giving constructive criticism on how to make your worker's work better.")
