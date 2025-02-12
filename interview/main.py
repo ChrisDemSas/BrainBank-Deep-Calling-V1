@@ -115,10 +115,10 @@ class InterviewAgent:
         if self.terminator.termination_status():
             return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections. Type 'Finish' to continue."
 
-        question = self._generate_suitable_question(response)
-
         if (response is None) or (response.lower() == 'start'):
-            return question
+            return "Hi! My name is SallyBot and I'm your questioner. I'd like to ask a few questions to get to know you. What brings you here today?"
+        
+        question = self._generate_suitable_question(response)
 
         self.history.append_history(response)
         if (self.obtain_question_counter() % self.obtain_question_threshold()) == 0 and (self.obtain_question_counter() > 0):
