@@ -9,7 +9,7 @@ class ChatInterface {
 
     constructor () { 
         this.questionCount = -1; // First question is: Type Start
-        this.maxQuestions = 12; //Change this later!
+        this.maxQuestions = 13; //Change this later!
         this.chatMessages = document.getElementById("chat-messages");
         this.sendBtn = document.getElementById("send-btn");
         this.viewResults = document.getElementById("view-results");

@@ -113,7 +113,7 @@ class InterviewAgent:
         # Return the updated question
         
         if self.terminator.termination_status():
-            return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections."
+            return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections. Type 'Finish' to continue."
 
         question = self._generate_suitable_question(response)
 

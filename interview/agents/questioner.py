@@ -22,7 +22,7 @@ class Questioner(LLMAgent):
         api_key: The API key from Anthropic API.
         client: The Claude Agent using LangChain.
         prompt: The prompt to activate the evaluator.
-        history: The Chat History of the Evaluator Agent.
+        question_counter: The number of questions.
     """
 
     def __init__(self, api_key: str) -> None:
@@ -44,15 +44,16 @@ class Questioner(LLMAgent):
         
         self.append_history("system", "You are a friend who is interviewing someone to match them with meaningful work. Be as personable as possible.")
 
-        self.critic_prompt = """You are recieving feedback based on how much we know about this user:
+        self.critic_prompt = """Here is a critique of the previous question, if it is 'None', ignore the critique:
         {critique}
 
         Here is the previous question:
         {response}
 
         Adjust the question as much as possible, taking into account:
-        1) Don't ask investigative work.
+        1) Ask investigative questions: Don't ask speculative questions!
         2) Must be a follow up question to the human responses.
+        3) Be friendly!
 
         Reword the question, and just output the reworded question.
         """
