@@ -9,7 +9,7 @@ In this case, this class has a few features which are common to all the other cl
 
 import logging
 from interview.agents.history import ChatHistory
-from typing import List
+from typing import List, Tuple
 
 
 class LLMAgent:
@@ -24,7 +24,7 @@ class LLMAgent:
     api_key: str
     chat_history: ChatHistory
 
-    def __init__(self, api_key: str) -> None:
+    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None) -> None:
         """Take in an API Key and initialize the LLM Agent.
 
         Attributes:
@@ -32,7 +32,7 @@ class LLMAgent:
         """
 
         self.api_key = api_key
-        self.chat_history = ChatHistory()
+        self.chat_history = ChatHistory(history = curr_history)
     
     def check_errors(self, response: str) -> None:
         """Check the errors of the LLM based on the response.
@@ -40,6 +40,8 @@ class LLMAgent:
         Attributes:
             - response: The response of the LLM.
         """
+
+        raise NotImplementedError
 
     def append_history(self, role: str, message: str) -> None:
         """Take in a role and message and append it to the chat history.

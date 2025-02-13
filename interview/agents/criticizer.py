@@ -12,6 +12,7 @@ from langchain_core.prompts import ChatPromptTemplate
 import logging
 from interview.agents.history import ChatHistory
 from interview.agents.llm import LLMAgent
+from typing import List, Tuple
 
 
 class Criticizer(LLMAgent):
@@ -31,7 +32,7 @@ class Criticizer(LLMAgent):
     prompt: str
     history: ChatHistory
 
-    def __init__(self, api_key: str, user_past: str = None, model: str = "GPT") -> None:
+    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None, user_past: str = None, model: str = "GPT") -> None:
         """
         Take in an API Key and user history and initialize the Criticizer Agent.
 
@@ -39,9 +40,10 @@ class Criticizer(LLMAgent):
             api_key: The API Key for Anthropic AI.
             user_history: Past personality assesment of the user.
             model: The model of the agent.
+            curr_history: The current chat history. Initialized to None.
         """
 
-        super().__init__(api_key)
+        super().__init__(api_key, curr_history)
 
         if model == "GPT":
             self.client = ChatOpenAI(model="gpt-4o-mini", 
@@ -76,7 +78,8 @@ class Criticizer(LLMAgent):
         Do not suggest new questions directly.
         """
 
-        self.append_history("system", "You are a manager who is giving constructive criticism on how to make your worker's work better.")
+        if curr_history is None:
+            self.append_history("system", "You are a manager who is giving constructive criticism on how to make your worker's work better.")
     
     def generate(self, question: str, evaluation: str) -> str:
         """Take in a question and evaluation from an LLM and generate a critique of the question.

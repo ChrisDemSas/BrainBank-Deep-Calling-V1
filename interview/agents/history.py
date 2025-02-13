@@ -19,12 +19,20 @@ class ChatHistory:
         history: A list of the histories present in the conversation.
     """
 
-    history: List[Tuple[str, str]]
+    history: List[Tuple[str]]
 
-    def __init__(self) -> None:
+    def __init__(self, history: List[Tuple[str]] = None) -> None:
         """Initialize the ChatHistory Class."""
 
-        self.history = []
+        if history is None:
+            self.history = []
+        else:
+            self.history = history
+        
+    def show_history(self) -> List[Tuple[str]]:
+        """Show the history."""
+
+        return self.history
     
     def append(self, role: str, response: str) -> None:
         """Append items to the Chat History Class.
@@ -48,12 +56,17 @@ class UserHistory:
     """
 
     history: List[str]
+    questions: List[str]
 
-    def __init__(self) -> None:
+    def __init__(self, past_history: List[List[str]] = None) -> None:
         """Initialize the UserHistory Class."""
 
-        self.history = []
-        self.questions = []
+        if past_history is None:
+            self.history = []
+            self.questions = []
+        else: # Based on obtain_conversation
+            self.history = past_history[1]
+            self.questions = past_history[0]
     
     def append_history(self, response: str) -> None:
         """Append items to the self.history.

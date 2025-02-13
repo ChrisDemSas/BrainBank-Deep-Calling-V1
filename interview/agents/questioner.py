@@ -13,6 +13,7 @@ import logging
 from interview.agents.history import ChatHistory
 from interview.agents.llm import LLMAgent
 from langchain_openai import ChatOpenAI
+from typing import List, Tuple
 
 
 class Questioner(LLMAgent):
@@ -25,14 +26,20 @@ class Questioner(LLMAgent):
         question_counter: The number of questions.
     """
 
-    def __init__(self, api_key: str) -> None:
+    api_key: str
+    client: ChatAnthropic 
+    prompt: str
+    question_counter: int
+
+    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None) -> None:
         """Initialize the Questioner class.
 
         Attributes:
             api_key: The API key from Anthropic API.
+            curr_history: The current chat history. Initialized to None.
         """
 
-        super().__init__(api_key)
+        super().__init__(api_key, curr_history)
         self.question_counter = 0
 
         self.client = ChatAnthropic(model="claude-3-5-haiku-latest", 
@@ -42,7 +49,8 @@ class Questioner(LLMAgent):
                                     max_retries = 2,
                                     api_key = api_key)
         
-        self.append_history("system", "You are a friend who is interviewing someone to match them with meaningful work. Be as personable as possible.")
+        if curr_history is None:
+            self.append_history("system", "You are a friend who is interviewing someone to match them with meaningful work. Be as personable as possible.")
 
         self.critic_prompt = """
         You have been provided with a critique of the previous question or a user response. If the critique is 'None,' treat the provided response as a user response.

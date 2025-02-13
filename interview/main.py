@@ -41,7 +41,8 @@ class InterviewAgent:
         id: The id of the interviewee
     """
 
-    def __init__(self, name: str, openai_key: str, anthropic_key: str) -> None:
+    def __init__(self, name: str, openai_key: str, anthropic_key: str, question_counter: int, user_history: List[List[str]] = None,
+                 criticizer_history: List[List[str]] = None, questioner_history: List[List[str]] = None, evaluator_history: List[List[str]] = None) -> None:
         """Initialize the InterviewAgent.
         
         Attribute:
@@ -50,24 +51,32 @@ class InterviewAgent:
             anthropic_key: Anthropic Key.
         """
 
-        self.criticizer = Criticizer(openai_key)
-        self.questioner = Questioner(anthropic_key)
-        self.evaluator = Evaluator(anthropic_key)
-        self.history = UserHistory()
+        if criticizer_history is None:
+            self.criticizer = Criticizer(openai_key)
+        else:
+            self.criticizer = Criticizer(openai_key, curr_history = criticizer_history)
+        
+        if questioner_history is None:
+            self.questioner = Questioner(anthropic_key)
+        else:
+            self.questioner = Questioner(anthropic_key, curr_history = questioner_history)
+        
+        if evaluator_history is None:
+            self.evaluator = Evaluator(anthropic_key)
+        else:
+            self.evaluator = Evaluator(anthropic_key, curr_history = evaluator_history)
+        
+        self.history = UserHistory(past_history=user_history)
         self.terminator = Termination(no_questions = 9)
         self.name = name
         self.id = uuid.uuid4()
+        self.question_counter = question_counter
 
     def obtain_evaluation(self) -> str:
         """Return the current evaluation of the user.
         """
 
         return self.evaluator.evaluation
-
-    def obtain_question_counter(self) -> int:
-        """Return the number of questions asked."""
-
-        return self.questioner.question_counter
     
     def obtain_question_threshold(self) -> int:
         """Return the threshold question."""
@@ -90,7 +99,7 @@ class InterviewAgent:
             response: The response by the user.
         """
 
-        if response is None:
+        if response is None or response == 'start':
 
             return self.questioner.generate("Hey! Please ask your first question!")
         elif critique is None:
@@ -114,18 +123,19 @@ class InterviewAgent:
         # Criticize the question
         # Update the question
         # Return the updated question
-        
+
         if self.terminator.termination_status():
 
             return "You're all done! I've compiled a profile on you and I'm ready to direct you to some connections. Type 'Finish' to continue."
 
         if (response is None) or (response.lower() == 'start'):
-
-            return "Hi! My name is Sally and I'm your interviewer! I'd like to ask a few questions (9 Questions) to get to know you. What brings you here today?"
+            self.question_counter += 1
+            return self._generate_suitable_question(None)
         
         question = self._generate_suitable_question(response)
         self.history.append_history(response)
-        if (self.obtain_question_counter() % self.obtain_question_threshold()) == 0 and (self.obtain_question_counter() > 0):
+
+        if (self.question_counter % self.obtain_question_threshold()) == 0 and (self.question_counter > 0):
             print("Updating Evaluation")
             past_history = self.history.concoctenate_string(self.obtain_question_threshold())
             self.evaluator.update_evaluation(past_history)
@@ -134,14 +144,21 @@ class InterviewAgent:
             evaluation = self.evaluator.generate()
             critique = self.criticizer.generate(question, evaluation)
             question = self._generate_suitable_question(response, critique=critique)
-
-        self.questioner.add_question_counter() # Add question counter
+        
+        self.history.append_questions(question)
+        self.question_counter += 1
 
         return question
     
     def terminate_interview(self) -> Dict:
         """Terminate the interview."""
 
+        # Update Evaluation
+        # Obtain the impression
+        # Terminate the interview
+
+        past_history = self.history.concoctenate_string(self.obtain_question_threshold())
+        self.evaluator.update_evaluation(past_history)
         impression = self.evaluator.obtain_evaluation()
         curr_time = time.time()
         conversation_history = self.history.obtain_conversation()
@@ -149,4 +166,25 @@ class InterviewAgent:
 
         return data
 
+    def prepare_serialization(self) -> Dict:
+        """Prepare the data for serialization, so that we can reinitialize the ."""
 
+        # Take out the histories
+        evaluator_history = self.evaluator.reveal_chat_history()
+        criticizer_history = self.criticizer.reveal_chat_history()
+        questioner_history = self.questioner.reveal_chat_history()
+        history = self.history.obtain_conversation()
+
+        # Evaluator evaluations
+        evaluation = self.evaluator.obtain_evaluation()
+
+        data = {
+            "evaluator_history": evaluator_history,
+            "criticizer_history": criticizer_history,
+            "questioner_history": questioner_history,
+            "evaluation": evaluation,
+            "history": history,
+            "question_counter": self.question_counter
+        }
+
+        return data

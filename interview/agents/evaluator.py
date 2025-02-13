@@ -14,6 +14,7 @@ import logging
 from interview.agents.history import ChatHistory
 from interview.agents.llm import LLMAgent
 from langchain_openai import ChatOpenAI
+from typing import List, Tuple
 
 
 class Evaluator(LLMAgent):
@@ -33,16 +34,17 @@ class Evaluator(LLMAgent):
     prompt: str
     history: ChatHistory
 
-    def __init__(self, api_key: str, model: str = "Claude", threshold: int = 3) -> None:
+    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None, model: str = "Claude", threshold: int = 3) -> None:
         """Take in an API key and initialize the Evaluator class.
 
         Attributes:
             api_key: The API Key from Anthropic.
             model: The model either Claude/GPT
             threshold: How many questions before an evaluation
+            curr_history: The current chat history. Initialized to None.
         """
 
-        super().__init__(api_key)
+        super().__init__(api_key, curr_history)
 
         if model == "GPT":
             self.client = ChatOpenAI(model="gpt-4o-mini", 
@@ -62,7 +64,8 @@ class Evaluator(LLMAgent):
         self.evaluation = "A person who is trying to find meaningful work."
         self.threshold = threshold
 
-        self.append_history("system", "You are a life coach who is trying to determine a person's values, future goals, personal interests. Your goal is to have a thorough understanding of the person.")
+        if curr_history is None:
+            self.append_history("system", "You are a life coach who is trying to determine a person's values, future goals, personal interests. Your goal is to have a thorough understanding of the person.")
 
     def update_evaluation(self, response: str) -> None:
         """Update the evaluation using the answers given."""
@@ -118,3 +121,8 @@ class Evaluator(LLMAgent):
         """Return self.evaluation."""
 
         return self.evaluation
+
+    def replace_evaluation(self, evaluation: str) -> None:
+        """Replace the current evaluation."""
+
+        self.evaluation = evaluation
