@@ -34,7 +34,19 @@ class ChatInterface {
 
     // Start the Chat: Remove the name of the inputContainer so that people can start chatting
     async startChat () {
-        this.addMessage("Type 'Start' to start the interview.");
+        //this.addMessage("Press 'Start' to start the interview.");
+        setTimeout(() => { // Get the First question
+                fetch("/get_response", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/x-www-form-urlencoded" },
+                    body: `message=Start`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.addMessage(data.question)
+                })
+            }, 1000)
+            this.questionCount ++;
         this.inputContainer.classList.remove('hidden') 
     }
 

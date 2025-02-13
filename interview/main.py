@@ -139,7 +139,7 @@ class InterviewAgent:
             print("Updating Evaluation")
             past_history = self.history.concoctenate_string(self.obtain_question_threshold())
             self.evaluator.update_evaluation(past_history)
-            question = self._generate_suitable_question(response, critique="Generate a new, generic question that is not similar to any questions asked previously and is related to one of personal values, future goals or personal interests.")
+            question = self._generate_suitable_question(response, critique="Generate a new question that is not similar to any questions asked previously and is related to one of personal values, future goals or personal interests.")
         else:
             evaluation = self.evaluator.generate()
             critique = self.criticizer.generate(question, evaluation)
