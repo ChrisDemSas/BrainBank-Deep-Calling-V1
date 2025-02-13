@@ -150,6 +150,9 @@ textarea {
     padding: 20px;
     border-radius: 10px;
     margin-top: 20px;
+    width: 75%;
+    position: relative;
+    left: 10%;
 }
 
 .connect-btn {

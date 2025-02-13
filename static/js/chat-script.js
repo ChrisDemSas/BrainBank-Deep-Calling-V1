@@ -93,6 +93,7 @@ class ChatInterface {
         
         // Create the base container structure
         document.querySelector('.container').innerHTML = `
+            <div class="container">
             <div class="sidebar">
                 <div class="logo">
                     <div class="brain-bank">■ Brain Bank</div>
@@ -109,15 +110,17 @@ class ChatInterface {
                 
                 <div class="user-info">■ John Doe</div>
             </div>
+            </div>
+
             <div class="results-page">
-                <h2>■ Thank you for answering the questions!</h2>
+                <h2>■ Here are our recommendations...</h2>
                 
                 <div class="results-container">
+                    <div class="results-content"></div>
                     <div class="navigation-arrows">
                         <button class="nav-arrow prev-btn">←</button>
                         <button class="nav-arrow next-btn">→</button>
                     </div>
-                    <div class="results-content"></div>
                     <div class="results-pagination"></div>
                 </div>
             </div>
