@@ -31,7 +31,7 @@ class Questioner(LLMAgent):
     prompt: str
     question_counter: int
 
-    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None) -> None:
+    def __init__(self, api_key: str, model: str = "GPT", curr_history: List[Tuple[str]] = None) -> None:
         """Initialize the Questioner class.
 
         Attributes:
@@ -42,12 +42,20 @@ class Questioner(LLMAgent):
         super().__init__(api_key, curr_history)
         self.question_counter = 0
 
-        self.client = ChatAnthropic(model="claude-3-5-haiku-latest", 
-                                    temperature = 0,
+        if model == "GPT":
+            self.client = ChatOpenAI(model="gpt-4o-mini", 
+                                    temperature = 1.0,
                                     max_tokens = 1024,
                                     timeout = None,
                                     max_retries = 2,
                                     api_key = api_key)
+        else:
+            self.client = ChatAnthropic(model="claude-3-5-haiku-latest", 
+                                        temperature = 0,
+                                        max_tokens = 1024,
+                                        timeout = None,
+                                        max_retries = 2,
+                                        api_key = api_key)
         
         if curr_history is None:
             self.append_history("system", "You are a friend who is interviewing someone to match them with meaningful work. Be as personable as possible.")
