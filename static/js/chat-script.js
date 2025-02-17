@@ -61,18 +61,20 @@ class ChatInterface {
 
         if (this.questionCount < this.maxQuestions) {
             setTimeout(() => { // Get the next question
-                this.addMessage("Analyzing Response...")
                     fetch("/get_response", {
                         method: "POST",
                         headers: {"Content-Type": "application/x-www-form-urlencoded" },
                         body: `message=${userInput}`
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        return response.json();
+                    })
                     .then(data => {
-                        this.addMessage(data.question)
+                        this.addMessage(data.question);
                     })
             }, 1000); 
         } else {
+            this.addMessage("You're all done! Press the 'View Results' button to view your results.")
             this.inputContainer.classList.add('hidden');
             this.viewResults.classList.add('visible');
         }
@@ -89,6 +91,31 @@ class ChatInterface {
     // Results Showcase
 
     async showResults () {
+        document.querySelector('.container').innerHTML = `
+        <div class="container">
+            <div class="sidebar">
+                <div class="logo">
+                    <div class="brain-bank">■ Brain Bank</div>
+                    <div class="deep-calling">└ Deep Calling</div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>Information</h3>
+                    <p>The Deep Calling feature aims to match provide quality matches between the candidate and any impact ventures. Our AI agent will do its best to interview you, so please answer as wholly as possible!</p>
+                    <p>Please be advised that since this is a prototype, the interview agent is still a little slow. Please give it some time between each response.</p>
+                    <p>Also, please wait until a response has come before writing into the chatbox. </p>
+                    <p class="feedback-note">As our AI is still a work in progress, we appreciate your feedback here:</p>
+                    <button class="feedback-btn">Feedback</button>
+                </div>
+                
+                <div class="user-info">■ John Doe</div>
+            </div>
+            </div>
+
+            <div class="results-page">
+                <h2>■ Please Wait....</h2>
+            </div>
+        `
         const results = await this.fetchResults();
         
         // Create the base container structure
@@ -103,7 +130,8 @@ class ChatInterface {
                 <div class="info-section">
                     <h3>Information</h3>
                     <p>The Deep Calling feature aims to match provide quality matches between the candidate and any impact ventures. Our AI agent will do its best to interview you, so please answer as wholly as possible!</p>
-                    
+                    <p>Please be advised that since this is a prototype, the interview agent is still a little slow. Please give it some time between each response.</p>
+                    <p>Also, please wait until a response has come before writing into the chatbox. </p>
                     <p class="feedback-note">As our AI is still a work in progress, we appreciate your feedback here:</p>
                     <button class="feedback-btn">Feedback</button>
                 </div>
