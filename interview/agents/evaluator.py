@@ -34,7 +34,7 @@ class Evaluator(LLMAgent):
     prompt: str
     history: ChatHistory
 
-    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None, model: str = "Claude", threshold: int = 3) -> None:
+    def __init__(self, api_key: str, curr_history: List[Tuple[str]] = None, model: str = "Claude", threshold: int = 2) -> None:
         """Take in an API key and initialize the Evaluator class.
 
         Attributes:

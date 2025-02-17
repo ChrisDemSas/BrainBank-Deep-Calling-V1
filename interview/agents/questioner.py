@@ -78,8 +78,8 @@ class Questioner(LLMAgent):
             Refine and reword the previous question based on the critique.
             Focus on investigative questions that encourage deeper exploration of the user's perspective, avoiding overly specific or speculative questions.
             Maintain a friendly tone to keep the conversation approachable and inviting.
-            Ensure the question touches on the user's goals, interests, or values, while encouraging a broader exploration of those themes.
             Output only one question, with some acknowledgement of the response.
+            Don't make it repetitive compared to the other question asked: Reword it properly.
         """
     
     def add_question_counter(self) -> None:

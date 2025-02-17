@@ -52,22 +52,22 @@ class InterviewAgent:
         """
 
         if criticizer_history is None:
-            self.criticizer = Criticizer(openai_key)
+            self.criticizer = Criticizer(anthropic_key, model="Claude")
         else:
-            self.criticizer = Criticizer(openai_key, curr_history = criticizer_history)
+            self.criticizer = Criticizer(anthropic_key, model="Claude", curr_history = criticizer_history)
         
         if questioner_history is None:
-            self.questioner = Questioner(anthropic_key)
+            self.questioner = Questioner(openai_key, model = "GPT")
         else:
-            self.questioner = Questioner(anthropic_key, curr_history = questioner_history)
+            self.questioner = Questioner(openai_key, model="GPT", curr_history = questioner_history)
         
         if evaluator_history is None:
-            self.evaluator = Evaluator(anthropic_key)
+            self.evaluator = Evaluator(openai_key, model="GPT")
         else:
-            self.evaluator = Evaluator(anthropic_key, curr_history = evaluator_history)
+            self.evaluator = Evaluator(openai_key, model = "GPT", curr_history = evaluator_history)
         
         self.history = UserHistory(past_history=user_history)
-        self.terminator = Termination(no_questions = 9)
+        self.terminator = Termination(no_questions = 7)
         self.name = name
         self.id = uuid.uuid4()
         self.question_counter = question_counter
@@ -139,7 +139,10 @@ class InterviewAgent:
             print("Updating Evaluation")
             past_history = self.history.concoctenate_string(self.obtain_question_threshold())
             self.evaluator.update_evaluation(past_history)
-            question = self._generate_suitable_question(response, critique="Generate a new question that is not similar to any questions asked previously and is related to one of personal values, future goals or personal interests.")
+            if self.question_counter == 2:
+                question = self._generate_suitable_question(response = "Please ask a question that deals with discerning the potential of the user.")
+            elif self.question_counter == 4:
+                question = self._generate_suitable_question(response ="Ask about other interests which are not previously discussed.")
         else:
             evaluation = self.evaluator.generate()
             critique = self.criticizer.generate(question, evaluation)

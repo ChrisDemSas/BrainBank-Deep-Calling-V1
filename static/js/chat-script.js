@@ -8,8 +8,8 @@ class ChatInterface {
         // 4. Obtain results from the evaluation
 
     constructor () { 
-        this.questionCount = -1; // First question is: Type Start
-        this.maxQuestions = 10; //Change this later!
+        this.questionCount = 0; 
+        this.maxQuestions = 7; //Change this later!
         this.chatMessages = document.getElementById("chat-messages");
         this.sendBtn = document.getElementById("send-btn");
         this.viewResults = document.getElementById("view-results");
